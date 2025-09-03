@@ -1,67 +1,61 @@
 # 📘 Guia do Projeto 3 – Risco Relativo
 
-### 🔹 1. Contexto e Objetivo
-
-O banco Super Caja enfrenta aumento da demanda por crédito e precisa automatizar a análise de risco.
-
-- Identificar perfis de clientes com maior risco de inadimplência.
-
-- Calcular o risco relativo de grupos de clientes.
-
-- Criar uma pontuação de crédito (score).
-
-- Validar suas classificações com matriz de confusão.
-
-- Montar visualizações e apresentação final.
-
 ### 🟦 Processar e preparar a base de dados
 
 #### 🔵 Conectar/importar dados para ferramentas
 
-☁️ ID do projeto: projeto-risco-relativo-470919
-- **Descrição:** Projeto voltado para análise de risco relativo de clientes de uma instituição financeira fictícia chamada *SuperCaja*.
+##### ☁️ Projeto
 
-🗂️ Dataset: bancoSuperCaja
-- **Descrição:** Dataset principal contendo informações de usuários e dados de empréstimos da SuperCaja.
+- ID: **projeto-risco-relativo-470919**
+- Descrição: Projeto focado na análise de risco relativo de clientes da instituição financeira fictícia SuperCaja.
 
-📚 user_info
-- Descrição: Informações cadastrais dos usuários.
+---
 
-📚 loans_outstanding
-- Descrição: Informações resumidas sobre os empréstimos ativos dos usuários.
+##### 🗂️ Dataset Principal
 
-📚 loans_detail
-- Descrição: Detalhes completos dos empréstimos solicitados, aprovados ou recusados.
+- Nome: **bancoSuperCaja**
+- Descrição: Dataset que reúne informações cadastrais dos usuários, detalhes dos empréstimos e dados de inadimplência da SuperCaja.
 
-📚 default
-- Descrição: Informações sobre inadimplência (clientes que deram "default").
+---
 
-#### 🔵 Identificar e tratar valores nulos
+##### 📚 Tabelas no Dataset
 
-🗂️  user_info
-| Variável            | Valores Nulos | % Aprox.    | Observação                                      |
-| ------------------- | ------------- | ----------- | ----------------------------------------------- |
-| `last_month_salary` | 7.199         | \~20%       | Variável importante para análise de risco.      |
-| `number_dependents` | 943           | Menos grave | Pode afetar avaliação de capacidade de crédito. |
+1. **user_info**
+- Informações cadastrais dos usuários (idade, gênero, salário, dependentes etc.).
 
-- As demais colunas não possuem valores nulos (user_id, age, sex).
+2. **loans_outstanding**
+- Resumo dos empréstimos ativos dos usuários (tipo, identificador, relacionamento com o cliente).
 
-✅ 
+3. **loans_detail**
+- Detalhes completos dos empréstimos solicitados, aprovados ou recusados (informações sobre atrasos, dívida, uso de crédito).
 
-🗂️  loans_outstanding
-- Nenhuma coluna com valores nulos.
-✅ Nenhuma ação necessária.
+4. **default**
+- Dados de inadimplência, indicando se o cliente deu "default" no pagamento.
 
-🗂️  loans_detail
-- Nenhuma coluna com valores nulos.
-✅ Nenhuma ação necessária.
+---
 
-🗂️  default
-- Nenhuma coluna com valores nulos.
-✅ Nenhuma ação necessária.
+#### 🔵 Identificar valores nulos
 
-#### 🔵 Identificar e tratar valores duplicados
+Foi realizada uma verificação de valores nulos nas tabelas user_info, loans_outstanding, loans_detail e default, utilizando a função COUNTIF() combinada com o operador IS NULL. Essa abordagem permitiu identificar, para cada coluna, a quantidade de registros ausentes.
+
+A análise revelou que apenas duas variáveis da tabela user_info apresentam valores nulos:
+
+- **last_month_salary**: 7.199 registros nulos (~20%)
+
+- **number_dependents**: 943 registros nulos (~2.6%)
+
+As demais colunas das outras tabelas estão completas e não exigem tratamento adicional. Ao fazer uma comparação entre as variaveis last_month_salary e default_flag os dados revelaram que A proporção de valores nulos entre inadimplentes (default_flag = 1) é: 130 / 683 ≈ 19,03% já A proporção de nulos entre bons pagadores (default_flag = 0) é: 7069 / 35317 ≈ 20,02% isso nos mosta que Os percentuais de nulos são quase iguais entre os dois grupos. Ausência de salário declarado não está mais associada à inadimplência neste caso.
+
+✅ As ações corretivas para os campos nulos listados acima, sera a substiuição do valores nulos pela mediana (5400.0)
+
+#### 🔵 Identificar valores duplicados
+
+Nenhuma das tabelas apresentou registros duplicados que exigissem tratamento ou exclusão. Todos os dados estão consistentes com a estrutura esperada de cada tabela. A checagem de duplicatas foi feita com GROUP BY, HAVING, e validações específicas por tabela, garantindo a integridade das informações para as próximas etapas da análise.
+
+✅ Nenhuma ação corretiva foi necessária para valores duplicados.
+
 #### 🔵 Identificar e gerenciar dados fora do escopo de análise
+
 #### 🔵 Identificar e tratar dados discrepantes em variáveis ​​categóricas
 #### 🔵 Identificar e tratar dados discrepantes em variáveis ​​numéricas
 #### 🔵 Verificar e alterar o tipo de dados
