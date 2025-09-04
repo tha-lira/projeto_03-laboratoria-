@@ -144,6 +144,23 @@ Essas variáveis foram salvas na nova tabela loans_features e poderão ser utili
 
 
 
+| Tabela              | Alteração Realizada / Sugerida                                                                                            | Justificativa                                                                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `user_info`         | - Preenchimento de `last_month_salary` nulo com a mediana (5.400,00) <br> - Preenchimento de `number_dependents` nulo     | Reduz impacto de valores ausentes. A mediana é robusta contra outliers e evita viés entre inadimplentes e bons pagadores.                            |
+|                     | - Remoção da variável `sex`                                                                                               | Informações sensíveis não podem ser usadas em modelos de crédito por questões éticas e legais (LGPD / viés algorítmico).                             |
+|                     | - Identificação e marcação de outliers em `last_month_salary`, `age` e `number_dependents`                                | Facilita decisões de tratamento futuro. Por enquanto, pode-se optar por manter, transformar ou excluir dependendo do impacto.                        |
+|                     | - Remoção de `user_id` após o join                                                                                        | Identificador sem valor preditivo direto.                                                                                                            |
+| `loans_outstanding` | - Padronização de `loan_type` (ex: "Other", "others", "OTHER" → "other")                                                  | Garante consistência para análise e evita duplicidades nas agregações por tipo de empréstimo.                                                        |
+|                     | - Criação da tabela `loans_features` com variáveis agregadas: <br> `loan_count`, `count_real_estate`, `count_other`, etc. | Feature engineering: transforma dados por empréstimo em dados por cliente, permitindo análise preditiva mais eficaz.                                 |
+| `loans_detail`      | - Remoção de variáveis altamente correlacionadas: <br> `number_times_delayed_payment_loan_30_59_days` e `60_89_days`      | Redução de multicolinearidade. Correlação > 0,98 pode distorcer modelos lineares e impactar interpretabilidade.                                      |
+|                     | - Remoção de `debt_ratio`                                                                                                 | Correlação ≈ 0 com a variável alvo (`default_flag`) — baixa relevância preditiva.                                                                    |
+|                     | - Identificação de outliers em variáveis de atraso e uso de crédito                                                       | Alto grau de assimetria. Pode ser necessário normalizar, transformar ou limitar impacto com técnicas robustas (como log ou clipping).                |
+| `default`           | - Nenhuma alteração estrutural                                                                                            | Dados já binarizados. Apenas observar o desbalanceamento da variável `default_flag` (≈ 1,9% de inadimplentes).                                       |
+| (geral)             | - União das tabelas tratadas via `user_id`                                                                                | Montar a tabela final de modelagem (ex: `tabela_modelagem_final`) com os dados limpos, padronizados e enriquecidos com as novas variáveis agregadas. |
+
+
+
+
 
 
 
