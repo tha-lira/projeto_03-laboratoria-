@@ -3,6 +3,8 @@
 
 #### 🔵 Identificar valores nulos
 
+Objetivo: Identifique e trate valores nulos usando comandos SQL.
+
 ```
 -- 🔍 Verificação de valores nulos por coluna na tabela
 
@@ -42,6 +44,8 @@ WHERE last_month_salary IS NOT NULL
 
 #### 🔵 Identificar valores duplicados
 
+Objetivo: Identifique e trate dados duplicados usando comandos SQL.
+
 ```
 SELECT
   user_id,
@@ -56,8 +60,72 @@ HAVING COUNT(*) > 1
 ORDER BY qtd_duplicados DESC;
 ```
 
-#### 🔵 Identificar e tratar valores duplicados
 #### 🔵 Identificar e gerenciar dados fora do escopo de análise
+
+Objetivo: Use CORR para entender a correlação entre variáveis
+
+```
+--
+
+SELECT
+  CORR(more_90_days_overdue, number_times_delayed_payment_loan_30_59_days)
+FROM `projeto-risco-relativo-470919.bancoSuperCaja.loans_detail`
+
+--
+
+SELECT
+  CORR(more_90_days_overdue, number_times_delayed_payment_loan_60_89_days)
+FROM `projeto-risco-relativo-470919.bancoSuperCaja.loans_detail`
+
+--
+
+SELECT
+  CORR(number_times_delayed_payment_loan_30_59_days, number_times_delayed_payment_loan_60_89_days) AS corr_30_60
+FROM `projeto-risco-relativo-470919.bancoSuperCaja.loans_detail`
+
+```
+
 #### 🔵 Identificar e tratar dados discrepantes em variáveis ​​categóricas
+
+Objetivo: Identifique e resolva valores inconsistentes usando comandos SQL, como UPPER, LOWER.
+
+```
+-- 
+
+SELECT DISTINCT sex
+FROM `projeto-risco-relativo-470919.bancoSuperCaja.user_info`
+ORDER BY sex;
+
+-- 
+
+SELECT DISTINCT loan_type
+FROM `projeto-risco-relativo-470919.bancoSuperCaja.loans_outstanding`
+ORDER BY loan_type;
+```
+
 #### 🔵 Identificar e tratar dados discrepantes em variáveis ​​numéricas
-#### 🔵 Verificar e alterar o tipo de dados
+
+Objetivo: Identificar e processar OUTLIERS
+
+```
+---
+
+SELECT
+  APPROX_QUANTILES(age, 4) AS quartis,
+  AVG(age) AS media,
+  STDDEV(age) AS desvio_padrao
+FROM
+  `projeto-risco-relativo-470919.bancoSuperCaja.user_info`;
+```
+
+####  🔵Criar novas variáveis
+
+Objetivo: Crie novas variáveis ​​e salve-as em uma nova tabela ou visualização.
+
+####  🔵 Unir tabelas
+
+Objetivo: Entenda o comando JOIN e suas variedades para unir diferentes tabelas.
+
+#### 🔵 Construir tabelas auxiliares
+
+Objetivo: Use o comando WITH ou Subqueries para construir tabelas temporárias.
