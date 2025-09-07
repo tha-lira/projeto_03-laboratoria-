@@ -98,48 +98,38 @@ ORDER BY loan_type;
 Objetivo: Identificar e processar OUTLIERS
 
 ```
--- Análise estatística descritiva
 SELECT
-  APPROX_QUANTILES(age, 4) AS quartis,
-  AVG(age) AS media,
-  STDDEV(age) AS desvio_padrao
+  'nome_variavel' AS variavel,
+  APPROX_QUANTILES(coluna, 4)[OFFSET(1)] AS Q1,
+  APPROX_QUANTILES(coluna, 4)[OFFSET(2)] AS Q2,
+  APPROX_QUANTILES(coluna, 4)[OFFSET(3)] AS Q3,
+  AVG(coluna) AS media,
+  STDDEV(coluna) AS desvio_padrao,
+  MAX(coluna) AS maximo,
+  (APPROX_QUANTILES(coluna, 4)[OFFSET(3)] - APPROX_QUANTILES(coluna, 4)[OFFSET(1)]) AS IQR,
+  (APPROX_QUANTILES(coluna, 4)[OFFSET(1)] - 1.5 * (APPROX_QUANTILES(coluna, 4)[OFFSET(3)] - APPROX_QUANTILES(coluna, 4)[OFFSET(1)])) AS limite_inferior,
+  (APPROX_QUANTILES(coluna, 4)[OFFSET(3)] + 1.5 * (APPROX_QUANTILES(coluna, 4)[OFFSET(3)] - APPROX_QUANTILES(coluna, 4)[OFFSET(1)])) AS limite_superior
 FROM
-  `projeto-risco-relativo-470919.bancoSuperCaja.user_info`;
+  `projeto-risco-relativo-470919.bancoSuperCaja.nome_tabela`;
 ```
 
 #### Tratamento das tabelas 
 
 🔧 Tratamento da `Tabela user_info`
 
-| Ação                            | Variável            | Justificativa                                                                            |
-| ------------------------------- | ------------------- | ---------------------------------------------------------------------------------------- |
-| **Preencher nulos com mediana** | `last_month_salary` | Alta proporção de nulos (\~20%). Substituir pela mediana evita viés extremo.             |
-| **Preencher nulos com mediana** | `number_dependents` | Proporção de nulos baixa (\~2,6%). A mediana mantém consistência e evita perda de dados. |
-| **Remover variável**            | `sex`               | Informação sensível (ética/legal). Não deve ser usada em modelos de crédito.             |
-| **Manter variável**             | `user_id`           | Necessária para realizar junções (`JOINs`) com outras tabelas posteriormente.            |
-
 ```
 CREATE OR REPLACE TABLE `projeto-risco-relativo-470919.bancoSuperCaja.user_info_tratada` AS
 SELECT
   user_id,
-  age,
-  IFNULL(last_month_salary, 5400) AS last_month_salary,  
-  IFNULL(number_dependents, 0) AS number_dependents     
+  IF(age > 96, 96, age) AS age,
+  IF(IFNULL(last_month_salary, 5400) > 15510.5, 15510.5, IFNULL(last_month_salary, 5400)) AS last_month_salary,
+  IF(IFNULL(number_dependents, 0) > 2, 2, IFNULL(number_dependents, 0)) AS number_dependents
 FROM
   `projeto-risco-relativo-470919.bancoSuperCaja.user_info`;
+
 ```
 
 🔧 Tratamento da Tabela loans_outstanding
-
-| **Ação**                           | **Variável**           | **Justificativa**                                                                          |
-| ---------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------ |
-| **Padronizar valores categóricos** | `loan_type`            | Corrigir inconsistências de escrita (ex: “REAL ESTATE”, “others”) e padronizar os valores. |
-| **Criar variável derivada**        | `loan_count`           | Representa o total de empréstimos por cliente, útil para entender o perfil de contratação. |
-| **Criar variável derivada**        | `count_real_estate`    | Mostra quantos empréstimos do tipo “real estate” o cliente possui.                         |
-| **Criar variável derivada**        | `count_other`          | Mostra quantos empréstimos do tipo “other” o cliente possui.                               |
-| **Criar variável binária**         | `has_real_estate_loan` | Indica (0/1) se o cliente possui ao menos um empréstimo “real estate”.                     |
-| **Criar variável binária**         | `has_other_loan`       | Indica (0/1) se o cliente possui ao menos um empréstimo “other”.                           |
-| **Manter variável**                | `user_id`              | Chave para junção com outras tabelas (JOIN).                                               |
 
 ```
 CREATE OR REPLACE TABLE `projeto-risco-relativo-470919.bancoSuperCaja.loans_outstanding_tratada` AS
@@ -167,23 +157,16 @@ GROUP BY user_id;
 
 🔧 Tratamento da Tabela loans_detail
 
-| **Ação**             | **Variável**                                   | **Justificativa**                                                                   |
-| -------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------- |
-| **Remover variável** | `number_times_delayed_payment_loan_30_59_days` | Correlação muito alta com outras variáveis de atraso (corr > 0,98). Redundante.     |
-| **Remover variável** | `number_times_delayed_payment_loan_60_89_days` | Alta correlação com outras variáveis (corr > 0,99). Pode causar multicolinearidade. |
-| **Remover variável** | `debt_ratio`                                   | Correlação quase nula com inadimplência (corr ≈ -0,007). Pouco valor preditivo.     |
-| **Manter variável**  | `more_90_days_overdue`                         | Correlação moderada com inadimplência (corr ≈ 0,31). Indicador relevante de risco.  |
-| **Manter variável**  | `using_lines_not_secured_personal_assets`      | Pode representar uso de crédito rotativo; útil na modelagem.                        |
-| **Manter variável**  | `user_id`                                      | Necessária para junção com outras tabelas (JOIN).                                   |
-
 ```
 CREATE OR REPLACE TABLE `projeto-risco-relativo-470919.bancoSuperCaja.loans_detail_tratada` AS
 SELECT
   user_id,
-  more_90_days_overdue,
-  using_lines_not_secured_personal_assets
+  debt_ratio,
+  IF(more_90_days_overdue > 0, 0, more_90_days_overdue) AS more_90_days_overdue,
+  IF(using_lines_not_secured_personal_assets > 1.319, 1.319, using_lines_not_secured_personal_assets) AS using_lines_not_secured_personal_assets
 FROM
   `projeto-risco-relativo-470919.bancoSuperCaja.loans_detail`;
+
 ```
 
 🔧 Tratamento da Tabela default
@@ -197,38 +180,34 @@ Objetivo: Entenda o comando JOIN e suas variedades para unir diferentes tabelas.
 ```
 CREATE OR REPLACE TABLE `projeto-risco-relativo-470919.bancoSuperCaja.base_unificada` AS
 SELECT 
-  -- user_info
+  -- 🔹 user_info_tratada
   u.user_id,
   u.age,
-  u.last_month_salary,
-  u.number_dependents,
+  u.last_month_salary AS salary_last_month,
+  u.number_dependents AS dependents,
 
-  -- loans_outstanding
-  lo.loan_count,
-  lo.count_real_estate,
-  lo.count_other,
-  lo.has_real_estate_loan,
-  lo.has_other_loan,
+  -- 🔹 loans_outstanding_tratada
+  IFNULL(lo.loan_count, 0) AS loan_count,
+  IFNULL(lo.count_real_estate, 0) AS loan_count_real_estate,
+  IFNULL(lo.count_other, 0) AS loan_count_other,
+  IFNULL(lo.has_real_estate_loan, 0) AS has_real_estate_loan,
+  IFNULL(lo.has_other_loan, 0) AS has_other_loan,
 
-  -- loans_detail
-  ld.more_90_days_overdue,
-  ld.using_lines_not_secured_personal_assets,
+  -- 🔹 loans_detail_tratada
+  IFNULL(ld.more_90_days_overdue, 0) AS overdue_90_days,
+  IFNULL(ld.using_lines_not_secured_personal_assets, 0) AS unsecured_credit_lines,
+  IFNULL(ld.number_times_delayed_payment_loan_30_59_days, 0) AS delays_30_59_days,
+  IFNULL(ld.number_times_delayed_payment_loan_60_89_days, 0) AS delays_60_89_days,
+  IFNULL(ld.debt_ratio, 0) AS debt_ratio,
 
-  -- default
-  d.default_flag
+  -- 🔹 default_tratada
+  IFNULL(d.default_flag, 0) AS default_flag
 
 FROM `projeto-risco-relativo-470919.bancoSuperCaja.user_info_tratada` u
-
 LEFT JOIN `projeto-risco-relativo-470919.bancoSuperCaja.loans_outstanding_tratada` lo
   ON u.user_id = lo.user_id
-
 LEFT JOIN `projeto-risco-relativo-470919.bancoSuperCaja.loans_detail_tratada` ld
   ON u.user_id = ld.user_id
-
 LEFT JOIN `projeto-risco-relativo-470919.bancoSuperCaja.default_tratada` d
   ON u.user_id = d.user_id;
 ```
-
-#### 🔵 Construir tabelas auxiliares
-
-Objetivo: Use o comando WITH ou Subqueries para construir tabelas temporárias.
