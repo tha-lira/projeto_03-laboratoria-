@@ -77,37 +77,13 @@ Para compreender melhor as relações entre variáveis numéricas e auxiliar na 
 
 #### 🔵 Identificar e tratar dados discrepantes em variáveis ​​categóricas
 
-Foi utilizado a função DISTINCT, para encontar inconsistencias de escritacnas variaveis catecoricas. com isso foram identificadas inconsistências nos valores registrados. Por exemplo, na variável **loan_type**, foram encontradas variações como "OTHER", "Other", "others" que foram unificadas em "other", e "REAL ESTATE", "Real Estate", "real estate". 
-
-🛠️ A padronização desses valores foi realizada para garantir a uniformidade dos dados, evitar duplicidades e permitir análises e modelagens mais precisas e confiáveis.
-
-[Consulta detalhada](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/dados_discrepantes.md)
+Foi utilizado a função DISTINCT, para encontar inconsistencias de escritacnas variaveis catecoricas. com isso foram identificadas inconsistências nos valores registrados. Por exemplo, na variável **loan_type**, foram encontradas variações como "OTHER", "Other", "others" que foram unificadas em "other", e "REAL ESTATE", "Real Estate", "real estate". A padronização desses valores foi realizada para garantir a uniformidade dos dados, evitar duplicidades e permitir análises e modelagens mais precisas e confiáveis.
 
 #### 🔵 Identificar e tratar dados discrepantes em variáveis ​​numéricas
 
-A etapa seguinte focou na detecção de valores extremos (outliers) nas variáveis numéricas presentes nas tabelas. Para isso, foram utilizadas as funções APPROX_QUANTILES(), AVG() e STDDEV() no Google BigQuery, permitindo o cálculo dos quartis, média e desvio padrão para cada variável. 
+A etapa seguinte focou na detecção de valores extremos (outliers) nas variáveis numéricas presentes nas tabelas. Para isso, foram utilizadas as funções APPROX_QUANTILES(), AVG() e STDDEV() no Google BigQuery, permitindo o cálculo dos quartis, média e desvio padrão para cada variável.  A partir desses cálculos, foram definidos os limites inferior e superior por meio do Intervalo Interquartílico (IQR = Q3 – Q1), sendo considerados outliers os valores acima de Q3 + 1,5*IQR ou abaixo de Q1 – 1,5*IQR.
 
-As principais descobertas foram:
-
-📁 Tabela user_info
-
-- **last_month_salary** apresentou valores extremamente altos, com o valor máximo de `R$ 1.560.100`, enquanto o terceiro quartil era de apenas `R$ 8.219`. Aproximadamente 1.187 registros estavam acima do limite superior (definido como 1,5 * IQR acima do Q3).
-
-- **age** apresentou 10 registros com idade acima de `96 anos`, enquanto o Q3 era de `63`. Esses casos foram classificados como outliers superiores.
-
-- **number_dependents** tinha valor máximo de 13, porém com uma média baixa (0,76), indicando casos isolados de dependentes muito altos.
-
-📁 Tabela loans_detail
-
-- **debt_ratio** apresentou forte assimetria, com média de `351,58` e valor máximo de `307.001`, sendo que o Q3 era de apenas 0,89. Foram identificados 7.575 registros acima do limite superior.
-
-- Variáveis de atraso de pagamento como **more_90_days_overdue**, **number_times_delayed_payment_loan_30_59_days** e **number_times_delayed_payment_loan_60_89_days** apresentaram valor `máximo de 98`, com `mediana igual a zero`. Isso indica que a maioria dos clientes não teve histórico de atraso, mas uma minoria teve muitos casos — sugerindo necessidade de atenção na modelagem, pois esses valores extremos podem influenciar algoritmos de classificação.
-
-📁 Tabela default
-
-- A variável **default_flag** (indicadora de inadimplência) apresentou distribuição muito desbalanceada, com média de 0,019 — o que significa que apenas cerca de 1,9% da base de clientes está inadimplente. Esse desequilíbrio deve ser considerado na modelagem, para evitar viés.
-
-[Consulta detalhada](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/dados_discrepantes.md)
+[Consulta detalhada das variáveis](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/dados_discrepantes.md)
 
 #### 🔵 Criar novas variáveis
 
@@ -127,41 +103,25 @@ Essas variáveis foram salvas na nova tabela loans_features e poderão ser utili
 
 Foi criado a tabela para união das bases `base_unificada`, foi realizado o tratamento dos valores nulos provenientes dos LEFT JOINs. Realizamos a união das tabelas user_info_tratada, loans_outstanding_tratada, loans_detail_tratada e default para criar uma base única e consistente para análise de risco. A tabela user_info serviu como base principal, onde agregamos informações dos empréstimos da tabela loans_outstanding por cliente, criando variáveis que indicam quantidade e tipos de empréstimos. Em seguida, incorporamos detalhes dos empréstimos e histórico de atrasos da tabela loans_detail e adicionamos a variável-alvo de inadimplência (default_flag) da tabela default. Utilizamos joins que preservam todos os clientes, mesmo aqueles sem registros em tabelas auxiliares, garantindo integridade e completude dos dados. Essa união permitiu consolidar o perfil financeiro dos clientes, facilitando análises e a modelagem preditiva de risco de crédito. 
 
-🔧 Tratamento da `Tabela user_info`
+[Tratamento individual das tabelas](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/tratamento.md)
 
-| Ação                            | Variável            | Justificativa                                                                            |
-| ------------------------------- | ------------------- | ---------------------------------------------------------------------------------------- |
-| **Preencher nulos com mediana** | `last_month_salary` | Alta proporção de nulos (\~20%). Substituir pela mediana evita viés extremo.             |
-| **Preencher nulos com mediana** | `number_dependents` | Proporção de nulos baixa (\~2,6%). A mediana mantém consistência e evita perda de dados. |
-| **Remover variável**            | `sex`               | Informação sensível (ética/legal). Não deve ser usada em modelos de crédito.             |
-| **Manter variável**             | `user_id`           | Necessária para realizar junções (`JOINs`) com outras tabelas posteriormente.            |
+Tabela `base_unificada`
 
-🔧 Tratamento da Tabela loans_outstanding
-
-| **Ação**                           | **Variável**           | **Justificativa**                                                                          |
-| ---------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------ |
-| **Padronizar valores categóricos** | `loan_type`            | Corrigir inconsistências de escrita (ex: “REAL ESTATE”, “others”) e padronizar os valores. |
-| **Criar variável derivada**        | `loan_count`           | Representa o total de empréstimos por cliente, útil para entender o perfil de contratação. |
-| **Criar variável derivada**        | `count_real_estate`    | Mostra quantos empréstimos do tipo “real estate” o cliente possui.                         |
-| **Criar variável derivada**        | `count_other`          | Mostra quantos empréstimos do tipo “other” o cliente possui.                               |
-| **Criar variável binária**         | `has_real_estate_loan` | Indica (0/1) se o cliente possui ao menos um empréstimo “real estate”.                     |
-| **Criar variável binária**         | `has_other_loan`       | Indica (0/1) se o cliente possui ao menos um empréstimo “other”.                           |
-| **Manter variável**                | `user_id`              | Chave para junção com outras tabelas (JOIN).                                               |
-
-🔧 Tratamento da Tabela loans_detail
-
-| **Ação**             | **Variável**                                   | **Justificativa**                                                                   |
-| -------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------- |
-| **Remover variável** | `number_times_delayed_payment_loan_30_59_days` | Correlação muito alta com outras variáveis de atraso (corr > 0,98). Redundante.     |
-| **Remover variável** | `number_times_delayed_payment_loan_60_89_days` | Alta correlação com outras variáveis (corr > 0,99). Pode causar multicolinearidade. |
-| **Remover variável** | `debt_ratio`                                   | Correlação quase nula com inadimplência (corr ≈ -0,007). Pouco valor preditivo.     |
-| **Manter variável**  | `more_90_days_overdue`                         | Correlação moderada com inadimplência (corr ≈ 0,31). Indicador relevante de risco.  |
-| **Manter variável**  | `using_lines_not_secured_personal_assets`      | Pode representar uso de crédito rotativo; útil na modelagem.                        |
-| **Manter variável**  | `user_id`                                      | Necessária para junção com outras tabelas (JOIN).                                   |
-
-🔧 Tratamento da Tabela default
-
-- A tabela manteve as duas colunas originais, para uso posterior na análise preditiva.
+| Variável                 | Tipo    | Descrição                                                                        |
+| ------------------------ | ------- | -------------------------------------------------------------------------------- |
+| `user_id`                | INTEGER | Identificador único do cliente.                                                  |
+| `age`                    | INTEGER | Idade do cliente.                                                                |
+| `salary_last_month`      | FLOAT   | Salário do cliente no último mês (valores nulos tratados pela mediana).          |
+| `dependents`             | INTEGER | Número de dependentes do cliente (nulos tratados como 0).                        |
+| `loan_count`             | INTEGER | Quantidade total de empréstimos ativos do cliente.                               |
+| `count_real_estate`      | INTEGER | Quantidade de empréstimos do tipo **real estate**.                               |
+| `count_other`            | INTEGER | Quantidade de empréstimos do tipo **other**.                                     |
+| `has_real_estate_loan`   | INTEGER | Indicador binário (0/1) se o cliente possui ao menos 1 empréstimo imobiliário.   |
+| `has_other_loan`         | INTEGER | Indicador binário (0/1) se o cliente possui ao menos 1 empréstimo de outro tipo. |
+| `overdue_90_days`        | INTEGER | Quantidade de vezes que o cliente atrasou mais de 90 dias no pagamento.          |
+| `unsecured_credit_lines` | FLOAT   | Proporção de linhas de crédito não garantidas por ativos pessoais.               |
+| `debt_ratio`             | FLOAT   | Relação entre dívidas e renda mensal do cliente.                                 |
+| `default_flag`           | INTEGER | Indicador binário (0/1) se o cliente entrou em default.                          |
 
 ### 🟪 Fazer uma análise exploratória
 
