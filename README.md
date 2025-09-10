@@ -78,3 +78,5 @@ O conjunto de dados contém informações de clientes e empréstimos, dividido e
 | ------------- | ------------------------------------------------------------------- |
 | user\_id      | Identificação do cliente                                            |
 | default\_flag | Histórico de inadimplência (1 = inadimplente, 0 = não inadimplente) |
+
+[Processo de Limpeza de Dados](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/processo.md)

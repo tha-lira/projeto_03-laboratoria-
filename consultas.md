@@ -113,7 +113,9 @@ FROM
   `projeto-risco-relativo-470919.bancoSuperCaja.nome_tabela`;
 ```
 
-#### Tratamento das tabelas 
+#### Tratamento individual das tabelas
+
+Antes da unificação das tabelas, cada uma passou por um processo de limpeza e transformação com foco na padronização, tratamento de valores nulos, outliers e preparação para criação de variáveis agregadas. Abaixo estão os detalhes de cada etapa.
 
 🔧 Tratamento da `Tabela user_info`
 
@@ -162,7 +164,7 @@ CREATE OR REPLACE TABLE `projeto-risco-relativo-470919.bancoSuperCaja.loans_deta
 SELECT
   user_id,
   debt_ratio,
-  IF(more_90_days_overdue > 0, 0, more_90_days_overdue) AS more_90_days_overdue,
+  IF(more_90_days_overdue > 0, 1, more_90_days_overdue) AS more_90_days_overdue,
   IF(using_lines_not_secured_personal_assets > 1.319, 1.319, using_lines_not_secured_personal_assets) AS using_lines_not_secured_personal_assets
 FROM
   `projeto-risco-relativo-470919.bancoSuperCaja.loans_detail`;
