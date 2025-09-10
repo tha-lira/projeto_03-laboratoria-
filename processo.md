@@ -173,18 +173,3 @@ Tabela `base_unificada`
 | `unsecured_credit_lines` | FLOAT   | Proporção de linhas de crédito não garantidas por ativos pessoais (tratados). |
 | `debt_ratio`             | FLOAT   | Relação entre dívida total e renda mensal do cliente.                         |
 | `default_flag`           | INTEGER | Indicador binário se o cliente entrou em inadimplência (1 = sim, 0 = não).    |
-
-### 🟪 Fazer uma análise exploratória
-
-#### 🟣 Agrupar dados de acordo com variáveis ​​categóricas
-#### 🟣 Visualizar variáveis ​​categóricas
-#### 🟣 Aplicar medidas de tendência central
-#### 🟣 Ver distribuição
-#### 🟣 Aplicar medidas de dispersão
-#### 🟣 Calcular quartis, decis ou percentis
-#### 🟣 Calcular correlação entre variáveis
-
-### 🟥 Aplicar técnica de análise
-
-#### 🔴 Calcular o risco relativo
-#### 🔴 Regressão logística
