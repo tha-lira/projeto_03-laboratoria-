@@ -660,17 +660,20 @@ ORDER BY
 #### 🟣 Calcular correlação entre variáveis ​​numéricas
 Objetivo: Compreender a relação que existe entre variáveis ​​numéricas através de correlações. Use gráficos de dispersão e linhas de tendência. Você também pode usar o comando CORR no BigQuery
 
-📌 Correlação com default_flag (inadimplência):
+✅ 1. Correlação com default_flag (inadimplência)
+
+```
 SELECT
   CORR(salary_last_month, default_flag) AS corr_salario_default,
   CORR(dependents, default_flag) AS corr_dependentes_default,
   CORR(debt_ratio, default_flag) AS corr_debt_default,
   CORR(loan_count, default_flag) AS corr_loans_default
 FROM `projeto-risco-relativo-470919.bancoSuperCaja.base_unificada`;
+```
 
+✅ 2.  Correlação entre outras variáveis
 
-📌 Correlação entre outras variáveis:
-
+```
 SELECT
   CORR(salary_last_month, debt_ratio) AS corr_salario_debt,
   CORR(salary_last_month, loan_count) AS corr_salario_loans,
@@ -678,3 +681,129 @@ SELECT
   CORR(age, salary_last_month) AS corr_age_salary,
   CORR(dependents, loan_count) AS corr_dep_loans,
 FROM `projeto-risco-relativo-470919.bancoSuperCaja.base_unificada`;
+```
+
+### 🟥 2.3 Aplicar técnica de análise
+
+
+#### 🔴 Calcular risco relativo
+
+✅ 1. Risco relativo por faixa etária (age)
+
+```
+WITH base AS (
+    SELECT
+        CASE
+            WHEN age < 25 THEN '18-24'
+            WHEN age BETWEEN 25 AND 34 THEN '25-34'
+            WHEN age BETWEEN 35 AND 44 THEN '35-44'
+            WHEN age BETWEEN 45 AND 54 THEN '45-54'
+            ELSE '55+'
+        END AS faixa_etaria,
+        COUNT(*) AS total_clientes,
+        SUM(CASE WHEN default_flag = 1 THEN 1 ELSE 0 END) AS inadimplentes,
+        ROUND(1.0 * SUM(CASE WHEN default_flag = 1 THEN 1 ELSE 0 END) / COUNT(*), 4) AS taxa_inadimplencia
+FROM `projeto-risco-relativo-470919.bancoSuperCaja.base_unificada`
+    GROUP BY faixa_etaria
+),
+referencia AS (
+    SELECT taxa_inadimplencia FROM base WHERE faixa_etaria = '55+'
+)
+SELECT
+    b.faixa_etaria,
+    b.total_clientes,
+    b.inadimplentes,
+    b.taxa_inadimplencia,
+    ROUND(b.taxa_inadimplencia / r.taxa_inadimplencia, 2) AS risco_relativo
+FROM base b, referencia r
+ORDER BY risco_relativo DESC;
+```
+
+✅ 2. Risco relativo por debt_ratio (baixo, médio, alto)
+
+```
+WITH base AS (
+    SELECT
+        CASE
+            WHEN debt_ratio < 0.2 THEN 'Baixo'
+            WHEN debt_ratio BETWEEN 0.2 AND 0.5 THEN 'Médio'
+            ELSE 'Alto'
+        END AS faixa_debt_ratio,
+        COUNT(*) AS total_clientes,
+        SUM(CASE WHEN default_flag = 1 THEN 1 ELSE 0 END) AS inadimplentes,
+        ROUND(1.0 * SUM(CASE WHEN default_flag = 1 THEN 1 ELSE 0 END) / COUNT(*), 4) AS taxa_inadimplencia
+    FROM `projeto-risco-relativo-470919.bancoSuperCaja.base_unificada`
+    GROUP BY faixa_debt_ratio
+),
+referencia AS (
+    SELECT taxa_inadimplencia FROM base WHERE faixa_debt_ratio = 'Baixo'
+)
+SELECT
+    b.faixa_debt_ratio,
+    b.total_clientes,
+    b.inadimplentes,
+    b.taxa_inadimplencia,
+    ROUND(b.taxa_inadimplencia / r.taxa_inadimplencia, 2) AS risco_relativo
+FROM base b, referencia r
+ORDER BY risco_relativo DESC;
+```
+
+✅ 3. Risco relativo por has_real_estate_loan (com ou sem imóvel financiado)
+
+```
+WITH base AS (
+    SELECT
+        CASE
+            WHEN has_real_estate_loan = 1 THEN 'Com Imóvel Financiado'
+            ELSE 'Sem Imóvel Financiado'
+        END AS grupo_imovel,
+        COUNT(*) AS total_clientes,
+        SUM(CASE WHEN default_flag = 1 THEN 1 ELSE 0 END) AS inadimplentes,
+        ROUND(1.0 * SUM(CASE WHEN default_flag = 1 THEN 1 ELSE 0 END) / COUNT(*), 4) AS taxa_inadimplencia
+    FROM `projeto-risco-relativo-470919.bancoSuperCaja.base_unificada`
+    GROUP BY grupo_imovel
+),
+referencia AS (
+    SELECT taxa_inadimplencia FROM base WHERE grupo_imovel = 'Sem Imóvel Financiado'
+)
+SELECT
+    b.grupo_imovel,
+    b.total_clientes,
+    b.inadimplentes,
+    b.taxa_inadimplencia,
+    ROUND(b.taxa_inadimplencia / r.taxa_inadimplencia, 2) AS risco_relativo
+FROM base b, referencia r
+ORDER BY risco_relativo DESC;
+```
+
+✅ 4. Risco relativo por loan_count (poucos vs. muitos empréstimos)
+
+```
+WITH base AS (
+    SELECT
+        CASE
+            WHEN loan_count = 0 THEN 'Sem Empréstimos'
+            WHEN loan_count BETWEEN 1 AND 2 THEN 'Poucos'
+            ELSE 'Muitos'
+        END AS grupo_emprestimos,
+        COUNT(*) AS total_clientes,
+        SUM(CASE WHEN default_flag = 1 THEN 1 ELSE 0 END) AS inadimplentes,
+        ROUND(1.0 * SUM(CASE WHEN default_flag = 1 THEN 1 ELSE 0 END) / COUNT(*), 4) AS taxa_inadimplencia
+    FROM `projeto-risco-relativo-470919.bancoSuperCaja.base_unificada`
+    GROUP BY grupo_emprestimos
+),
+referencia AS (
+    SELECT taxa_inadimplencia FROM base WHERE grupo_emprestimos = 'Sem Empréstimos'
+)
+SELECT
+    b.grupo_emprestimos,
+    b.total_clientes,
+    b.inadimplentes,
+    b.taxa_inadimplencia,
+    ROUND(b.taxa_inadimplencia / r.taxa_inadimplencia, 2) AS risco_relativo
+FROM base b, referencia r
+ORDER BY risco_relativo DESC;
+```
+
+#### 🔴 Aplicar segmentação por Score
+
