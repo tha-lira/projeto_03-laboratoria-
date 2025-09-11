@@ -10,7 +10,6 @@ Com a queda das taxas de juros, houve um aumento expressivo na demanda por créd
 
 Diante disso, o banco busca automatizar a análise de crédito, utilizando técnicas avançadas de análise de dados. O objetivo é construir um sistema de score de crédito que permita classificar clientes em diferentes níveis de risco, reduzindo inadimplência e aumentando a eficiência operacional.
 
-
 ### 🔷 Objetivo
 
 - Identificar perfis de clientes com maior risco de inadimplência.
@@ -47,13 +46,13 @@ Python para análises e cálculos complementares no Colab.
 
 📌[Análise Exploratória](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/analiseExploratoria.md)
 
-📌[Consultas no Big Query](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/consultasBigQuery.md)
+📌[Técnica de Análise de Risco Relativo](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/analiseRiscoRelativo.md)
 
-📌[Técnica de Análise]()
+📌[Consultas no Big Query](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/consultasBigQuery.md)
 
 ---
 
-🎥 Apresentação:
-📊 Spreadsheet: 
-📈 Dashboard:
+- 🎥 Apresentação:
+- 📊 Spreadsheet: 
+- 📈 Dashboard:
 
