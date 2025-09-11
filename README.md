@@ -41,9 +41,13 @@ Python para análises e cálculos complementares no Colab.
 
 ---
 
-📌[Preparação da Base de Dados](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/processo.md)
+📌[Preparação da Base de Dados](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/analiseBase.md)
 
-📌[Análise Exploratória]()
+📌[Tratamento da Base de Dados](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/tratamentoBase.md)
+
+📌[Análise Exploratória](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/analiseExploratoria.md)
+
+📌[Consultas no Big Query](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/consultasBigQuery.md)
 
 📌[Técnica de Análise]()
 
