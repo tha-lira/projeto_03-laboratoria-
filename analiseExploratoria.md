@@ -235,7 +235,7 @@ Conforme aumenta o número de empréstimos, a variabilidade do perfil financeiro
 
 Objetivo: Calcular quartis para variáveis ​​de risco relativo no BigQuery
 
-1. Tabela de Decis de Salário vs Inadimplência
+✅ 1. Tabela de Decis de Salário vs Inadimplência
 
 | Decil Salário | Total Clientes | Inadimplentes | Taxa Inadimplência (%) | Salário Mínimo | Salário Máximo |
 | ------------- | -------------- | ------------- | ---------------------- | -------------- | -------------- |
@@ -252,7 +252,7 @@ Objetivo: Calcular quartis para variáveis ​​de risco relativo no BigQuery
 
 Insights Decis de Salário: O risco de inadimplência é mais alto nos primeiros decis (principalmente no 2º decil, 3,5%). Conforme o salário aumenta, a inadimplência diminui consistentemente, chegando a 0,61% no último decil. Isso sugere que salários mais altos indicam menor risco de inadimplência.
 
-2. Tabela de Percentis de Debt Ratio vs Inadimplência
+✅ 2. Tabela de Percentis de Debt Ratio vs Inadimplência
 
 | Percentil Debt Ratio | Total Clientes | Inadimplentes | Taxa Inadimplência (%) | Debt Ratio Mínimo | Debt Ratio Máximo |
 | -------------------- | -------------- | ------------- | ---------------------- | ----------------- | ----------------- |
@@ -266,7 +266,7 @@ Insights Decis de Salário: O risco de inadimplência é mais alto nos primeiros
 
 O grupo com debt_ratio zero (1º percentil) tem a maior taxa de inadimplência (8,89%). Percentis intermediários apresentam taxas baixíssimas ou zero. A partir do percentil 70, a inadimplência começa a subir novamente, atingindo até 4,72% no percentil 79. Indica uma relação não linear: tanto dívida quase zero quanto dívida muito alta implicam maior risco. Clientes com dívida muito alta (últimos percentis) não necessariamente têm inadimplência alta (ex: percentil 100 tem 0,83%).
 
-📊 Insights a partir dos decis de salário e inadimplência
+✅ 3. Insights a partir dos decis de salário e inadimplência
 
 | Decil | Faixa Salarial (mín - máx) | Taxa de Inadimplência (%) | Insight                                                               |
 | ----- | -------------------------- | ------------------------- | --------------------------------------------------------------------- |
@@ -287,19 +287,26 @@ O grupo com debt_ratio zero (1º percentil) tem a maior taxa de inadimplência (
 
 Objetivo: Compreender a relação que existe entre variáveis ​​numéricas através de correlações. Use gráficos de dispersão e linhas de tendência. Você também pode usar o comando CORR no BigQuery
 
+✅ 1. Correlação com default_flag (inadimplência)
+
+| Variável            | Correlação com Inadimplência (`default_flag`) | Interpretação                         |
+| ------------------- | --------------------------------------------- | ------------------------------------- |
+| `salary_last_month` | **-0.052**                                    | Leve correlação negativa (quase nula) |
+| `dependents`        | **+0.029**                                    | Quase nenhuma correlação              |
+| `debt_ratio`        | **-0.007**                                    | Nula (surpreendentemente!)            |
+| `loan_count`        | **-0.058**                                    | Quase nenhuma correlação              |
+
+Não há nenhuma variável com correlação significativa com inadimplência (valores muito próximos de zero). Isso sugere que a inadimplência pode depender de combinações de variáveis (interações) ou de variáveis categóricas, não apenas de correlações lineares simples.
 
 
+✅ 2. Correlação entre outras variáveis
 
-SELECT
-  user_id,
-  debt_ratio,
-  CASE
-    WHEN debt_ratio BETWEEN 0.0 AND 0.1 THEN 'Muito baixo (0-10%)'
-    WHEN debt_ratio > 0.1 AND debt_ratio <= 0.3 THEN 'Baixo (10-30%)'
-    WHEN debt_ratio > 0.3 AND debt_ratio <= 0.5 THEN 'Moderado (30-50%)'
-    WHEN debt_ratio > 0.5 AND debt_ratio <= 0.7 THEN 'Alto (50-70%)'
-    WHEN debt_ratio > 0.7 AND debt_ratio <= 1.0 THEN 'Muito alto (70-100%)'
-    ELSE 'Extremo (>100%)'
-  END AS categoria_debt_ratio
-FROM
-  `projeto-risco-relativo-470919.bancoSuperCaja.base_unificada
+| Par de Variáveis                   | Correlação | Interpretação                    |
+| ---------------------------------- | ---------- | -------------------------------- |
+| `salary_last_month` × `debt_ratio` | **-0.048** | Sem relação significativa        |
+| `salary_last_month` × `loan_count` | **+0.262** | **Correlação moderada positiva** |
+| `debt_ratio` × `loan_count`        | **+0.056** | Muito fraca                      |
+| `age` × `salary_last_month`        | **+0.086** | Levemente positiva, mas fraca    |
+| `dependents` × `loan_count`        | **+0.086** | Também fraca                     |
+
+A única correlação um pouco relevante é entre salary_last_month e loan_count. Isso faz sentido: pessoas com maior salário tendem a ter mais empréstimos aprovados.

@@ -659,3 +659,22 @@ ORDER BY
 
 #### 🟣 Calcular correlação entre variáveis ​​numéricas
 Objetivo: Compreender a relação que existe entre variáveis ​​numéricas através de correlações. Use gráficos de dispersão e linhas de tendência. Você também pode usar o comando CORR no BigQuery
+
+📌 Correlação com default_flag (inadimplência):
+SELECT
+  CORR(salary_last_month, default_flag) AS corr_salario_default,
+  CORR(dependents, default_flag) AS corr_dependentes_default,
+  CORR(debt_ratio, default_flag) AS corr_debt_default,
+  CORR(loan_count, default_flag) AS corr_loans_default
+FROM `projeto-risco-relativo-470919.bancoSuperCaja.base_unificada`;
+
+
+📌 Correlação entre outras variáveis:
+
+SELECT
+  CORR(salary_last_month, debt_ratio) AS corr_salario_debt,
+  CORR(salary_last_month, loan_count) AS corr_salario_loans,
+  CORR(debt_ratio, loan_count) AS corr_debt_loans
+  CORR(age, salary_last_month) AS corr_age_salary,
+  CORR(dependents, loan_count) AS corr_dep_loans,
+FROM `projeto-risco-relativo-470919.bancoSuperCaja.base_unificada`;
