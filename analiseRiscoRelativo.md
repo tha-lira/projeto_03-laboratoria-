@@ -199,3 +199,12 @@ Corte 5 escolhido como ponto de equilíbrio entre recall alto e precisão aceit�
     - Médio risco: análise adicional.
 
     - Alto risco: reprovação ou exigência de garantias.
+
+📌[Documentação Técnica — Preparação Base de Dados](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/analiseBase.md)
+🔗[Consultas SQL - Preparação Base de Dados](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/BigQuery-prepararBase.md)
+
+📌[Documentação Técnica — Análise Exploratórias](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/analiseExploratoria.md)
+🔗[Consultas SQL - Análise Exploratórias](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/BigQuery-analiseExploratoria.md)
+
+📌[Documentação Técnica — Análise de Risco](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/analiseRiscoRelativo.md)
+🔗 [Consultas SQL - Análise de Risco](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/BigQuery-analiseDeRisco.md)

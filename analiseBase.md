@@ -177,3 +177,12 @@ Essa consolidação permitiu criar um retrato mais completo do comportamento fin
 | `default_flag`           | INTEGER | Indicador binário se o cliente entrou em inadimplência (1 = sim, 0 = não).    |
 
 ---
+
+📌[Documentação Técnica — Preparação Base de Dados](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/analiseBase.md)
+🔗[Consultas SQL - Preparação Base de Dados](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/BigQuery-prepararBase.md)
+
+📌[Documentação Técnica — Análise Exploratórias](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/analiseExploratoria.md)
+🔗[Consultas SQL - Análise Exploratórias](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/BigQuery-analiseExploratoria.md)
+
+📌[Documentação Técnica — Análise de Risco](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/analiseRiscoRelativo.md)
+🔗 [Consultas SQL - Análise de Risco](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/BigQuery-analiseDeRisco.md)
