@@ -1,8 +1,8 @@
-# 📘 Guia do Projeto 3 – Risco Relativo
+## Documentação Técnica — Preparação Base de Dados
 
-### 🟦 Processar e preparar a base de dados
+### 📊 Processar e preparar a 
 
-#### 🔵 Conectar/importar dados para ferramentas
+#### Conectar/importar dados para ferramentas
 
 - Projeto
 ID: `projeto-risco-relativo-470919`
@@ -21,7 +21,7 @@ Descrição: Reúne informações cadastrais dos usuários, detalhes dos emprés
 
 ---
 
-#### 🔵  Identificar e tratar valores nulos
+#### Identificar e tratar valores nulos
 
 Foi realizada uma análise detalhada para identificar valores nulos nas tabelas `user_info`, `loans_outstanding`, `loans_detail` e `default`. Para isso, foram aplicadas consultas SQL utilizando a função `COUNTIF()` com o operador `IS NULL` para quantificar os registros ausentes em cada coluna.
 
@@ -53,13 +53,13 @@ Essa distribuição semelhante sugere que a ausência do dado de salário não e
 Para substituir os valores ausentes de forma adequada, foi calculada a mediana da variável `last_month_salary` considerando apenas os registros não nulos:
 Com base nessa mediana, os valores nulos serão imputados, preservando a distribuição original dos dados e garantindo a integridade da análise.
 
-#### 🔵 Identificar e tratar valores duplicados
+#### Identificar e tratar valores duplicados
 
 Nenhuma das tabelas apresentou registros duplicados que exigissem tratamento ou exclusão. Todos os dados estão consistentes com a estrutura esperada de cada tabela. A checagem de duplicatas foi feita com GROUP BY, HAVING, e validações específicas por tabela, garantindo a integridade das informações para as próximas etapas da análise.
 
 🛠️ Nenhuma ação corretiva foi necessária para valores duplicados.
 
-#### 🔵 Identificar e gerenciar dados fora do escopo de análise
+#### Identificar e gerenciar dados fora do escopo de análise
 
 Para compreender melhor as relações entre variáveis numéricas e auxiliar na seleção das variáveis mais relevantes para a modelagem, foram realizadas análises de correlação utilizando a função CORR().
 
@@ -78,11 +78,11 @@ Para compreender melhor as relações entre variáveis numéricas e auxiliar na 
 | `number_times_delayed_payment_loan_30_59_days` | Alta correlação com outras variáveis de atraso – **redundância** (corr > 0,98)  |
 | `number_times_delayed_payment_loan_60_89_days` | Alta correlação com outras variáveis de atraso – **redundância** (corr > 0,99)  |
 
-#### 🔵 Identificar e tratar dados discrepantes em variáveis ​​categóricas
+#### Identificar e tratar dados discrepantes em variáveis ​​categóricas
 
 Foi utilizado a função DISTINCT, para encontar inconsistencias de escritacnas variaveis catecoricas. com isso foram identificadas inconsistências nos valores registrados. Por exemplo, na variável **loan_type**, foram encontradas variações como "OTHER", "Other", "others" que foram unificadas em "other", e "REAL ESTATE", "Real Estate", "real estate". A padronização desses valores foi realizada para garantir a uniformidade dos dados, evitar duplicidades e permitir análises e modelagens mais precisas e confiáveis.
 
-#### 🔵 Identificar e tratar dados discrepantes em variáveis ​​numéricas
+#### Identificar e tratar dados discrepantes em variáveis ​​numéricas
 
 A etapa seguinte focou na detecção de valores extremos (outliers) nas variáveis numéricas presentes nas tabelas. Para isso, foram utilizadas as funções:
 
@@ -101,7 +101,7 @@ A partir disso, foram estabelecidos os limites para detecção de outliers:
 
 Qualquer valor fora desse intervalo foi considerado um outlier.
 
-📊 Tabela user_info
+✅ Tabela user_info
 
 | Variável            | Tratamento aplicado                                            |
 | ------------------- | -------------------------------------------------------------- |
@@ -109,7 +109,7 @@ Qualquer valor fora desse intervalo foi considerado um outlier.
 | `last_month_salary` | Valores acima de 15.510,5 foram **winsorizados para 15.510,5** |
 | `number_dependents` | Valores acima de 2,5 foram **winsorizados para 2**             |
 
-📊 Tabela loans_detail
+✅ Tabela loans_detail
 
 | Variável                                       | Tratamento aplicado                                      |
 | ---------------------------------------------- | -------------------------------------------------------- |
@@ -123,7 +123,7 @@ Essa abordagem permitiu a padronização da análise estatística das variáveis
 
 [Consulta detalhada das variáveis](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/dados_discrepantes.md)
 
-#### 🔵 Criar novas variáveis
+#### Criar novas variáveis
 
 Com base na tabela loans_outstanding, foi observado que cada cliente (user_id) pode possuir múltiplos empréstimos registrados, o que gera repetição de linhas para o mesmo indivíduo. Para transformar essa estrutura em algo mais útil para modelagem preditiva, foram criadas novas variáveis agregadas por cliente, permitindo capturar comportamentos relevantes de contratação de crédito.
 
@@ -140,7 +140,7 @@ Com base na tabela loans_outstanding, foi observado que cada cliente (user_id) p
 
 Essas variáveis foram derivadas utilizando funções de agregação como COUNT(), SUM() com cláusulas CASE WHEN, e foram salvas em uma nova tabela chamada loans_features. O objetivo é enriquecer o conjunto de dados com características comportamentais dos clientes em relação ao uso de crédito, as quais serão utilizadas na modelagem de risco de inadimplência.
 
-#### 🔵 Unir tabelas
+#### Unir tabelas
 
 Foi criada a tabela base_unificada, consolidando os dados tratados das tabelas user_info_tratada, loans_outstanding_tratada, loans_detail_tratada e default. Essa união teve como objetivo montar uma base única, consistente e preparada para a análise de risco de crédito.
 
@@ -156,7 +156,9 @@ Essa consolidação permitiu criar um retrato mais completo do comportamento fin
 
 [Tratamento individual das tabelas](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/tratamento.md)
 
-Tabela `base_unificada`
+---
+
+✅ Tabela `base_unificada`
 
 | Variável                 | Tipo    | Descrição                                                                     |
 | ------------------------ | ------- | ----------------------------------------------------------------------------- |
@@ -173,3 +175,5 @@ Tabela `base_unificada`
 | `unsecured_credit_lines` | FLOAT   | Proporção de linhas de crédito não garantidas por ativos pessoais (tratados). |
 | `debt_ratio`             | FLOAT   | Relação entre dívida total e renda mensal do cliente.                         |
 | `default_flag`           | INTEGER | Indicador binário se o cliente entrou em inadimplência (1 = sim, 0 = não).    |
+
+---
