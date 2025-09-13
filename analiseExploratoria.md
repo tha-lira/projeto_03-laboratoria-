@@ -1,8 +1,10 @@
-### 🟪 Fazer uma análise exploratória
+## Documentação Técnica — Análise Exploratória
+
+### 📊 Fazer uma análise exploratória
 
 O uso de ferramentas de visualização na etapa de análise exploratória nos ajuda a entender os dados com mais facilidade e de forma visual. Neste projeto utilizaremos a ferramenta Looker Studio para realizar esta tarefa.
 
-#### 🟣 Agrupar dados de acordo com variáveis ​​categóricas
+#### Agrupar dados de acordo com variáveis ​​categóricas
 
 Objetivo: Use tabelas no Looker Studio para resumir dados em variáveis ​​categóricas
 
@@ -45,7 +47,7 @@ A inadimplência entre quem não tem outros empréstimos é quase 7 vezes maior,
 
 A inadimplência entre quem não possui empréstimos é extremamente alta (14,35%), sugerindo ausência de histórico de crédito ou perfil de risco elevado. Por outro lado, clientes com 3 ou mais empréstimos têm melhor desempenho, indicando que acesso ao crédito é um sinal de confiabilidade.
 
-#### 🟣 Ver variáveis ​​categóricas
+#### Ver variáveis ​​categóricas
 
 Objetivo: Use gráficos de barras no Looker Studio para visualizar variáveis ​​categóricas.
 
@@ -80,7 +82,7 @@ Objetivo: Use gráficos de barras no Looker Studio para visualizar variáveis �
 | 2 empréstimos         | 1.581    | 3,61              |
 | 3 ou mais empréstimos | 32.929   | 1,62              |
 
-#### 🟣 Aplicar medidas de tendência central (moda, média, mediana)
+#### Aplicar medidas de tendência central (moda, média, mediana)
 
 Objetivo: Use as opções da tabela para calcular estatísticas descritivas para ajudar a compreender a distribuição dos dados
 
@@ -123,7 +125,7 @@ Conforme o número de empréstimos aumenta, a renda média também aumenta, assi
 
 Clientes com mais dependentes têm renda mais alta, o que pode refletir maior responsabilidade familiar. Entretanto, também apresentam maior inadimplência, sugerindo que a pressão financeira de sustentar mais pessoas impacta negativamente a capacidade de pagamento. A mediana do debt ratio é menor nos grupos com dependentes, indicando que a maioria desses clientes mantém comprometimento moderado da renda, apesar de casos extremos no grupo sem dependentes.
 
-#### 2.2.4 🟣 Ver distribuição
+#### Ver distribuição
 
 Objetivo: Use histograma e boxplot no LookerStudio para exibir variáveis ​​numéricas.
 
@@ -189,7 +191,7 @@ A mediana está mais próxima do Q1 → distribuição ligeiramente assimétrica
 
 A distribuição revela forte concentração na faixa entre R$5.400 e R$6.612, sugerindo que muitos clientes têm salários padronizados — possivelmente por atuarem no setor público ou por convenções corporativas. As demais faixas apresentam distribuição equilibrada, com cerca de 10% cada, o que mostra diversidade na base de clientes.
 
-#### 2.2.5 🟣 Aplicar medidas de dispersão (desvio padrão)
+#### Aplicar medidas de dispersão (desvio padrão)
 
 Objetivo: Use tabelas no Looker Studio para calcular o desvio padrão
 
@@ -231,7 +233,7 @@ Clientes com outros empréstimos têm maior dispersão em ambos os indicadores, 
 
 Conforme aumenta o número de empréstimos, a variabilidade do perfil financeiro cresce bastante — especialmente em debt ratio. Isso mostra que, apesar da maior confiança do mercado nesses clientes (como visto em análises anteriores), há também mais riscos embutidos, com perfis extremos tanto positivos quanto negativos.
 
-#### 🟣 Calcular quartis, decis ou percentis
+#### Calcular quartis, decis ou percentis
 
 Objetivo: Calcular quartis para variáveis ​​de risco relativo no BigQuery
 
@@ -283,7 +285,7 @@ O grupo com debt_ratio zero (1º percentil) tem a maior taxa de inadimplência (
 
 💡 Possíveis ações: Foco nas faixas 1 e 2: A inadimplência é maior, sinal que estratégias específicas de prevenção de risco devem ser aplicadas para esses grupos. Segmentação por faixa salarial: Poder criar políticas diferenciadas de crédito e acompanhamento para os grupos com maior risco. Monitoramento da faixa 7: Pequena alta de inadimplência após queda, vale investigar causas (ex: perfil de empréstimos, dívidas anteriores, variáveis externas). Uso de faixas para modelagem de risco: O decil salarial pode ser uma variável categórica importante para modelos preditivos de inadimplência.
 
-#### 2.2.7🟣 Calcular correlação entre variáveis ​​numéricas
+#### Calcular correlação entre variáveis ​​numéricas
 
 Objetivo: Compreender a relação que existe entre variáveis ​​numéricas através de correlações. Use gráficos de dispersão e linhas de tendência. Você também pode usar o comando CORR no BigQuery
 
