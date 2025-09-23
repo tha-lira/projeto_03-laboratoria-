@@ -159,9 +159,11 @@ ORDER BY corte;
 ```
 SELECT
   CASE
-    WHEN score_risco BETWEEN 0 AND 3 THEN 'Risco Baixo'
-    WHEN score_risco BETWEEN 4 AND 6 THEN 'Risco Médio'
-    ELSE 'Risco Alto'
+  WHEN score_risco <= 2 THEN "1 - Baixo"
+  WHEN score_risco = 3 THEN "2 - Medio"
+  WHEN score_risco = 4 THEN "3 - Moderado"
+  WHEN score_risco >= 5 THEN "4 - Alto"
+  ELSE "5 - Inválido"
   END AS faixa_risco,
   COUNT(*) AS total_clientes,
   SUM(CASE WHEN default_flag = 1 THEN 1 ELSE 0 END) AS total_inadimplentes,

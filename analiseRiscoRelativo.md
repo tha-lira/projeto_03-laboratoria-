@@ -178,27 +178,30 @@ Corte 5 escolhido como ponto de equilíbrio entre recall alto e precisão aceit�
 
 ✅ Faixas de Risco
 
-| Faixa de Risco | Score | Nº Clientes | Inadimplência (%) |
-| -------------- | ----- | ----------- | ----------------- |
-| Baixo          | 0 a 3 | 25.169      | 0.03%             |
-| Médio          | 4 a 6 | 10.632      | 5.43%             |
-| Alto           | 7 a 9 | 199         | 49.25%            |
+| Faixa de Risco | Total de Clientes | Total Inadimplentes | % Inadimplência |
+| -------------- | ----------------- | ------------------- | --------------- |
+| 1 - Seguro     | 9.550             | 1                   | 0,01%           |
+| 2 - Moderado   | 15.619            | 6                   | 0,04%           |
+| 3 - Alto       | 7.819             | 89                  | 1,14%           |
+| 4 - Critico    | 3.012             | 587                 | 19,49%          |
 
 🔍 Insights
 
-- A maior parte da base (70%) está concentrada em risco baixo ou médio.
+1. Forte correlação entre risco e inadimplência
 
-- Clientes com score ≥ 7 têm altíssima inadimplência, próximos de 50%.
+A taxa de inadimplência aumenta exponencialmente conforme a faixa de risco sobe. De 0,01% na faixa "Baixo" para 19,49% na faixa "Alto" — um aumento de quase 2.000 vezes.
 
-- O corte score ≥ 5 captura 86% dos inadimplentes, mas com muitos falsos positivos.
+2. Grande parte da base está concentrada em perfis de baixo risco
 
-- O uso de faixas de risco permite ações diferenciadas por perfil:
+Faixas "Baixo" e "Médio" somam 25.169 clientes, ou seja, quase 70% da base total analisada. Estas faixas apresentam inadimplência praticamente nula (juntas, apenas 7 inadimplentes em 25 mil).
 
-    - Baixo risco: concessão rápida.
+3. Faixa "Alto" representa risco desproporcional
 
-    - Médio risco: análise adicional.
+Embora represente apenas 8,4% da base (3.012 clientes), a faixa "Alto" concentra 86% de todos os inadimplentes (587 de 683). Isso indica uma alta concentração de perdas em uma minoria da carteira.
 
-    - Alto risco: reprovação ou exigência de garantias.
+4. Faixa "Moderado" merece atenção
+
+Com inadimplência de 1,14%, essa faixa tem um risco muito maior do que "Médio" (0,04%), mas ainda bem inferior ao "Alto" (19,49%). Pode ser uma oportunidade para ajustar políticas de crédito ou monitoramento, sem excluir totalmente esses clientes.
 
 📌[Documentação Técnica — Preparação Base de Dados](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/analiseBase.md)
 🔗[Consultas SQL - Preparação Base de Dados](https://github.com/tha-lira/projeto_03-laboratoria-/blob/main/BigQuery-prepararBase.md)

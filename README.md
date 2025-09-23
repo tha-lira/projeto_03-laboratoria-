@@ -51,7 +51,7 @@ Python para análises e cálculos complementares no Colab.
 
 ---
 
-- 🎥 Apresentação:
-- 📊 Spreadsheet: 
-- 📈 Dashboard:
 
+- 📊 Slides: https://docs.google.com/presentation/d/1Gt4M4H2nWqUk5pJ_4ImzTNbszm1DzQo1t6nU4Sb7jfI/edit?slide=id.p#slide=id.p
+- 📈 Dashboard: https://lookerstudio.google.com/reporting/21501eb5-7527-4049-865f-f516cb808ee1
+- 🎥 Apresentação: https://www.loom.com/share/6635445d48c24821bb0b8376b22fa536?sid=290d75b8-2644-4a57-9288-56b001afcbf5
